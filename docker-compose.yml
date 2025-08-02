@@ -1,0 +1,55 @@
+services:
+  portal-booking-app:
+    build:
+      context: ./portal-booking
+    networks:
+      - laravel
+    depends_on:
+      - portal-booking-db
+
+  portal-booking-nginx:
+    image: nginx:alpine
+    depends_on:
+      - portal-booking-app
+    networks:
+      - laravel
+
+  portal-booking-db:
+    image: postgres:14
+    environment:
+      POSTGRES_DB: portal
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    networks:
+      - laravel
+
+  room-service-app:
+    build:
+      context: ./room-service
+    networks:
+      - laravel
+    depends_on:
+      - room-service-db
+
+  room-service-nginx:
+    image: nginx:alpine
+    depends_on:
+      - room-service-app
+    networks:
+      - laravel
+
+  room-service-db:
+    image: postgres:14
+    environment:
+      POSTGRES_DB: room
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    networks:
+      - laravel
+
+volumes:
+  portal_booking_db:
+  room_service_db:
+
+networks:
+  laravel:
