@@ -43,20 +43,26 @@
         </div>
 
         {{-- Room --}}
-        <div class="mb-4 flex items-center gap-4">
+            <div class="mb-4 flex items-center gap-4">
             <label for="room_id" class="w-32 text-gray-700 font-medium">Room</label>
             <select name="room_id" id="room_id"
                     class="w-64 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-300"
                     required>
-                <option value="">-- Select Room --</option>
-                @forelse ($rooms as $room)
-                    <option value="{{ $room['id'] }}" {{ old('room_id') == $room['id'] ? 'selected' : '' }}>
-                        {{ $room['name'] }} (Capacity: {{ $room['capacity'] }})
-                    </option>
-                @empty
-                    <option disabled>No rooms available</option>
-                @endforelse
+            <option value="">-- Select Room --</option>
+            @foreach($rooms as $room)
+            <option value="{{ $room['id'] }}"
+                    data-capacity="{{ $room['capacity'] }}"
+                    data-facilities="{{ $room['facilities'] }}">
+                {{ $room['name'] }} (Kapasitas: {{ $room['capacity'] }})
+            </option>
+            @endforeach
             </select>
+
+    {{-- Room details --}}
+        <div id="room-details" class="mt-3 text-sm text-gray-700">
+            <p><strong>Kapasitas:</strong> <span id="room-capacity">-</span></p>
+            <p><strong>Fasilitas:</strong> <span id="room-facilities">-</span></p>
+            </div>
         </div>
 
         {{-- Title --}}
@@ -89,4 +95,14 @@
         </div>
     </form>
 </div>
+
+<script>
+document.getElementById('room_id').addEventListener('change', function () {
+    let selected = this.options[this.selectedIndex];
+    document.getElementById('room-capacity').textContent = selected.dataset.capacity || '-';
+    document.getElementById('room-facilities').textContent = selected.dataset.facilities || '-';
+});
+</script>
 @endsection
+
+{{-- made by Rifky Setya Rahman --}}

@@ -39,4 +39,7 @@
         </tbody>
     </table>
 </div>
+
+
 @endsection
+{{-- made by Rifky Setya Rahman --}}

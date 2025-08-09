@@ -42,3 +42,4 @@ class UserFactory extends Factory
         ]);
     }
 }
+// made by Rifky Setya Rahman

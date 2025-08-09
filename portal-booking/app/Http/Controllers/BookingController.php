@@ -39,20 +39,42 @@ class BookingController extends Controller
      * Store a newly created booking in storage.
      */
     public function store(Request $request)
-    {
+{
+    $validated = $request->validate([
+        'user_id'    => 'required|integer|exists:users,id',
+        'room_id'    => 'required|integer',
+        'title'      => 'required|string|max:255',
+        'start_time' => 'required|date|before:end_time',
+        'end_time'   => 'required|date|after:start_time',
+    ]);
 
-        $validated = $request->validate([
-            'user_id' => 'required|integer|exists:users,id',
-            'room_id' => 'required|integer',
-            'title' => 'required|string|max:255',
-            'start_time' => 'required|date|before:end_time',
-            'end_time' => 'required|date|after:start_time',
-        ]);
+    $roomId   = $validated['room_id'];
+    $newStart = $validated['start_time'];
+    $newEnd   = $validated['end_time'];
 
-        Booking::create($validated);
+    // Cek bentrok
+    $conflict = Booking::where('room_id', $roomId)
+        ->where(function ($query) use ($newStart, $newEnd) {
+            $query->whereBetween('start_time', [$newStart, $newEnd]) // Mulai baru di tengah jadwal lama
+                ->orWhereBetween('end_time', [$newStart, $newEnd])  // Selesai baru di tengah jadwal lama
+                ->orWhere(function ($q) use ($newStart, $newEnd) {   // Jadwal lama berada di dalam jadwal baru
+                    $q->where('start_time', '<', $newStart)
+                        ->where('end_time', '>', $newEnd);
+                });
+        })
+        ->exists();
 
-        return redirect()->route('booking.index')->with('success', 'Booking created successfully!');
+    if ($conflict) {
+        return back()
+            ->withErrors(['error' => 'Ruangan tidak tersedia pada jadwal yang dipilih karena sudah dibooking.'])
+            ->withInput();
     }
+
+    Booking::create($validated);
+
+    return redirect()->route('booking.index')->with('success', 'Booking created successfully!');
+}
+
 
     /**
      * Display the specified booking.
@@ -84,19 +106,43 @@ class BookingController extends Controller
      * Update the specified booking in storage.
      */
     public function update(Request $request, $id)
-    {
-        $validated = $request->validate([
-            'room_id' => 'required|integer',
-            'title' => 'required|string|max:255',
-            'start_time' => 'required|date|before:end_time',
-            'end_time' => 'required|date|after:start_time',
-        ]);
+{
+    $validated = $request->validate([
+        'room_id'    => 'required|integer',
+        'title'      => 'required|string|max:255',
+        'start_time' => 'required|date|before:end_time',
+        'end_time'   => 'required|date|after:start_time',
+    ]);
 
-        $bookings = Booking::findOrFail($id);
-        $bookings->update($validated);
+    $roomId   = $validated['room_id'];
+    $newStart = $validated['start_time'];
+    $newEnd   = $validated['end_time'];
 
-        return redirect()->route('booking.index')->with('success', 'Booking updated successfully!');
+    // Cek bentrok, tapi abaikan booking yang sedang diedit
+    $conflict = Booking::where('room_id', $roomId)
+        ->where('id', '!=', $id)
+        ->where(function ($query) use ($newStart, $newEnd) {
+            $query->whereBetween('start_time', [$newStart, $newEnd]) // mulai baru di tengah jadwal lama
+                  ->orWhereBetween('end_time', [$newStart, $newEnd]) // selesai baru di tengah jadwal lama
+                  ->orWhere(function ($q) use ($newStart, $newEnd) { // jadwal lama di dalam jadwal baru
+                      $q->where('start_time', '<', $newStart)
+                        ->where('end_time', '>', $newEnd);
+                  });
+        })
+        ->exists();
+
+    if ($conflict) {
+        return back()
+            ->withErrors(['error' => 'Ruangan tidak tersedia pada jadwal yang dipilih karena sudah dibooking.'])
+            ->withInput();
     }
+
+    $booking = Booking::findOrFail($id);
+    $booking->update($validated);
+
+    return redirect()->route('booking.index')->with('success', 'Booking updated successfully!');
+}
+
 
     /**
      * Remove the specified booking from storage.
@@ -109,3 +155,4 @@ class BookingController extends Controller
         return redirect()->route('booking.index')->with('success', 'Booking deleted successfully!');
     }
 }
+// made by Rifky Setya Rahman

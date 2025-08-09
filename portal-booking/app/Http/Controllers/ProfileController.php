@@ -58,3 +58,4 @@ class ProfileController extends Controller
         return Redirect::to('/');
     }
 }
+// made by Rifky Setya Rahman

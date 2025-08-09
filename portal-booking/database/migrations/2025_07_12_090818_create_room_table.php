@@ -26,3 +26,4 @@ return new class extends Migration
         Schema::dropIfExists('room');
     }
 };
+// made by Rifky Setya Rahman

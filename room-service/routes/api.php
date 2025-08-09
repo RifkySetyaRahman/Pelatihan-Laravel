@@ -15,3 +15,4 @@ route::middleware('auth:sanctum')->group(function() {
     Route::put('/rooms/{id}', [RoomController::class, 'update'])->name('room.update');
     Route::delete('/rooms/{id}', [RoomController::class, 'destroy'])->name('room.destroy');
 });
+// made by Rifky Setya Rahman

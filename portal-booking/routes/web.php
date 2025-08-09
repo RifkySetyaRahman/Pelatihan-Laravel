@@ -53,3 +53,4 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+// made by Rifky Setya Rahman

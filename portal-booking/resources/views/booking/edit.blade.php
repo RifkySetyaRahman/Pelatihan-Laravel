@@ -2,7 +2,25 @@
 
 @section('content')
 <div class="container">
-    <h2>Edit Booking</h2>
+    <div class="max-w-2xl mx-auto p-6">
+    <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-semibold text-gray-800">Edit Booking</h1>
+        <a href="{{ route('booking.index') }}"
+           class="px-4 py-2 border border-blue-600 text-black bg-white rounded hover:bg-blue-100 transition">
+           ← Back to Booking List
+        </a>
+    </div>
+
+    {{-- Error Validation --}}
+    @if ($errors->any())
+        <div class="mb-4 text-red-600">
+            <ul class="list-disc pl-5">
+                @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 
     <form action="{{ route('booking.update', $booking->id) }}" method="POST">
         @csrf
@@ -14,7 +32,7 @@
                 <option value="">-- Select Room --</option>
                 @foreach ($rooms as $room)
                     <option value="{{ $room['id'] }}" {{ $room['id'] == $booking->room_id ? 'selected' : '' }}>
-                        {{ $room['name'] }} (ID: {{ $room['id'] }})
+                        {{ $room['name'] }} (ID: {{ $room['id'] }}) (Kapasitas: {{ $room['capacity'] }})
                     </option>
                 @endforeach
             </select>
@@ -41,3 +59,4 @@
     </form>
 </div>
 @endsection
+{{-- made by Rifky Setya Rahman --}}

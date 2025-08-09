@@ -6,3 +6,4 @@ abstract class Controller
 {
     //
 }
+// made by Rifky Setya Rahman

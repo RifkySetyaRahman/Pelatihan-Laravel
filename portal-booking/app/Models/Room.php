@@ -21,3 +21,4 @@ use Illuminate\Database\Eloquent\Model;
 //         return $this->hasMany(Booking::class);
 //     }
 // }
+// made by Rifky Setya Rahman

@@ -48,3 +48,4 @@ return new class extends Migration
         Schema::dropIfExists('sessions');
     }
 };
+// made by Rifky Setya Rahman

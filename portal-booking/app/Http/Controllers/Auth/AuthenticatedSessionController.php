@@ -45,3 +45,4 @@ class AuthenticatedSessionController extends Controller
         return redirect('/');
     }
 }
+// made by Rifky Setya Rahman
